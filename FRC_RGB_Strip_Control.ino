@@ -71,7 +71,7 @@ void parseCommand(){
     Serial.println("Ready to set selected color");
     jobSwitch=3;
   }else if(strcmp(receivedChars,"SET_BRIGHT")==0){
-    Serial.println("Ready tp set brightness");
+    Serial.println("Ready to set brightness");
     jobSwitch=4;
   }else{
     Serial.println("Unrecognized command");
@@ -138,7 +138,7 @@ void setBrightness(){
     Serial.println("ERROR:OOB");
     return;
   }
-  analogWrite(stripPins[selectedStrip][color+1],b);
+  analogWrite(stripPins[selectedStrip][color+1],255-b);
   Serial.print("Success:");
   Serial.println(b);
 }

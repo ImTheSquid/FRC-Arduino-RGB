@@ -85,7 +85,7 @@ void parseCommand(){
     Serial.println("PONG");
     if(buzz)alert(300,100,true);
   }else{
-    Serial.println("Unrecognized command");
+    Serial.println("UNKNOWN");
     alert(200,100,true);
   }
   if(jobSwitch>0)alert(300,100,true);

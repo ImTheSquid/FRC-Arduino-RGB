@@ -110,7 +110,7 @@ void parseIntInput(){
 
 void setLedStrip(){
   int s=atoi(receivedChars);
-  if(s>0){
+  if(s>0||s<0){
     Serial.println("ERROR->OOB");
   }else{
     Serial.print("STRIP->");

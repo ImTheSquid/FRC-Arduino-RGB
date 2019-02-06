@@ -27,24 +27,18 @@ void setup() {
 }
 
 void loop() {
- parseInput();
+ 
 }
 
 void i2cIn(int howMany){
   while(Wire.available()>1){
     infoIn=Wire.read;
   }
+  parseCommand();
 }
 
 void i2cOut(){
   
-}
-
-void parseInput(){
-  if(newData){
-    parseCommand();
-    newData=false;
-  }
 }
 
 void parseCommand(){
@@ -68,7 +62,7 @@ void parseCommand(){
   }else if(strcmp(infoIn,"SET_SOUND")==0){
     Serial.println("SPK");
     jobSwitch=5;
-  }else if(strcmp(infoInChars,"PING")==0){
+  }else if(strcmp(infoIn,"PING")==0){
     Serial.println("PNG");
     if(buzz)alert(300,100,true);
   }else{
@@ -164,4 +158,3 @@ void alert(int pitch,int sLength,boolean useLED){
   delay(sLength);
   digitalWrite(alertLed,LOW);
 }
-

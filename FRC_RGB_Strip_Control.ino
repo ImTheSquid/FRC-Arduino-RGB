@@ -1,8 +1,6 @@
 #define buzzer 12
 const int alertLed=13;
-const byte numChars = 32;
-char receivedChars[numChars]; // an array to store the received data
-String input="";
+char infoIn[]=new char[32];
 int jobSwitch=0;
 int stripCount=1;
 int selectedStrip=0;
@@ -11,14 +9,15 @@ int color=0;
 int stripPins[1][4]={{2,3,5,6}};
 int stripVals[1][4]={{0,0,0}};
 
-boolean newData = false;
-boolean serCon=false;
 boolean buzz=true;
 
 void setup() {
  pinMode(alertLed,OUTPUT);
  Serial.begin(9600);
  Serial.println("READY");
+ Wire.begin(1);//Start I2C as a slave w/ address 1
+ Wire.onReceive(i2cIn);
+ Wire.onRequest(i2cOut);
  //Pin delcarations
  for(int i=0;i<1;i++){
   for(int j=0;j<4;j++){
@@ -28,29 +27,17 @@ void setup() {
 }
 
 void loop() {
- recvWithEndMarker();
  parseInput();
 }
 
-void recvWithEndMarker() {
- static byte ndx = 0;
- char endMarker = '\n';
- char rc;
- while (Serial.available() > 0 && newData == false) {
-   rc = Serial.read();
-   if (rc != endMarker) {
-    receivedChars[ndx] = rc;
-    ndx++;
-    if (ndx >= numChars) {
-      ndx = numChars - 1;
-    }
-   }
-   else {
-    receivedChars[ndx] = '\0'; // terminate the string
-    ndx = 0;
-    newData = true;
-   }
- }
+void i2cIn(int howMany){
+  while(Wire.available()>1){
+    infoIn=Wire.read;
+  }
+}
+
+void i2cOut(){
+  
 }
 
 void parseInput(){
@@ -66,26 +53,26 @@ void parseCommand(){
     parseIntInput();
     return;
   }
-  if(strcmp(receivedChars,"SET_STRIP")==0){
-    Serial.println("SET_STRIP->");
+  if(strcmp(infoIn,"SET_STRIP")==0){
+    Serial.println("STR");
     jobSwitch=1;
-  }else if(strcmp(receivedChars,"SET_POWER")==0){
-    Serial.println("SET_POWER->");
+  }else if(strcmp(infoIn,"SET_POWER")==0){
+    Serial.println("POW");
     jobSwitch=2;
-  }else if(strcmp(receivedChars,"SET_COLOR")==0){
-    Serial.println("SET_COLOR->");
+  }else if(strcmp(infoIn,"SET_COLOR")==0){
+    Serial.println("COL");
     jobSwitch=3;
-  }else if(strcmp(receivedChars,"SET_BRIGHT")==0){
-    Serial.println("SET_BRIGHT->");
+  }else if(strcmp(infoIn,"SET_BRIGHT")==0){
+    Serial.println("BRI");
     jobSwitch=4;
-  }else if(strcmp(receivedChars,"SET_SOUND")==0){
-    Serial.println("SET_SOUND->");
+  }else if(strcmp(infoIn,"SET_SOUND")==0){
+    Serial.println("SPK");
     jobSwitch=5;
-  }else if(strcmp(receivedChars,"PING")==0){
-    Serial.println("PONG");
+  }else if(strcmp(infoInChars,"PING")==0){
+    Serial.println("PNG");
     if(buzz)alert(300,100,true);
   }else{
-    Serial.println("UNKNOWN");
+    Serial.println("ERR0");
     alert(200,100,true);
   }
   if(jobSwitch>0)alert(300,100,true);
